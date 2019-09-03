@@ -8,6 +8,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r,include=FALSE}
+library(ggplot2)
+library(knitr)
 lista01 <- read.csv("~/aplicada2/control1/lista01.dat", sep="", na.strings="<NA>")
 attach(lista01)
 ```
@@ -19,24 +21,53 @@ Este reporte analisa el conjunto de datos *Prestigio de las ocupaciones canadien
 ### Descripción de datos
   Cada registro del conjunto de datos se identifica por la profesión que describe. Por cada profesión se tiene el nivel educativo promedio, el ingreso promedio expresado en dólares, el porcentaje de mujeres, la calificación del prestigio según Pineo-Porter, la clave de ocupación en el censo y el tipo de ocupación. Para el análisis que se va a realizar la variable que indica la clave de ocupación en el censo se ignorará.
  
- Las variables *educación*, *ingreso*, *mujeres* y *prestigio* son numéricas continuas a diferencia de la variable *tipo* que es categórica y puede tomar los valores de obrero (bc),profesional, gerencial y técnico (prof) y oficinista (wc). Del total de 102 profesiones censadas 4 de ellas no pertenecen a las categorías descritas anteriormente y tienen un valor de NA.
+ Las variables *educación*, *ingreso*, *mujeres* y *prestigio* son numéricas continuas a diferencia de la variable *tipo* que es categórica y puede tomar los valores de obrero (bc),profesional, gerencial y técnico (prof) y oficinista (wc). Del total de 102 profesiones censadas 4 de ellas no pertenecen a las categorías descritas anteriormente y tienen un valor de NA. Estas últimas observaciones serán omitidas en el análisis.
  
+```{r}
+lista01 <- lista01[!is.na(lista01$tipo) ,]
+``` 
 ### Estadísticas descriptivas
+
+
    
 ```{r, echo=FALSE}
-summary(lista01[,c(-1,-6)])
+
+tabla <- summary(lista01[,c(-1,-6)])
+for( i in 1:(length(tabla)-6)){
+  tabla[i] = strsplit(tabla[i],":")[[1]][2]
+}
+
+
+kable(cbind(c("Min", "1st Qu", "Median", "Mean", "3rd Qu", "Max"), tabla))
 ```
  
 
 
 El conjunto de datos contiene ocupaciones
 
-## Including Plots
+### Gráficas
 
-You can also embed plots, for example:
+```{r, echo=F}
+plotBase <- ggplot(data=lista01, aes(y=prestigio, color = tipo))
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+plotBase + geom_point(aes(x = mujeres)) + labs(title = "Prestigio como función del porcentaje de mujeres en la ocupación")
+
+```
+```{r, echo=F}
+plotBase + geom_point(aes(x = educacion)) + labs(title = "Prestigio como función del nivel educativo")
+
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r,echo=F}
+plotBase + geom_point(aes(x = ingreso)) + scale_x_log10() + labs(title = "Prestigio como función del ingreso", subtitle = "Con el ingreso en escala logarítmica")
+
+```
+
+```{r,echo=F}
+
+ggplot(data = lista01, aes(x = tipo, prestigio)) + geom_boxplot() + labs(title = "Distribución del prestigio por tipo de ocupación")
+```
+
+
+
