@@ -26,6 +26,15 @@ Este reporte analisa el conjunto de datos *Prestigio de las ocupaciones canadien
 ```{r}
 lista01 <- lista01[!is.na(lista01$tipo) ,]
 ``` 
+
+##Clasifiación de las variables
+  A continuación, procederemos a clasificar las variables de interés entre cualitativas y cuantitativas. Para propósitos de este trabajo conceptualizaremos las variables cualitativas como aquellas que expresan distintas cualidades, características o modalidad y cuya representación numérica no refleja más información. Específicamente, se pueden clasificar entre variables cualitativas ordinales, aquellas que pueden tomar valores ordenados como bajo, mediano, alto, y variables cualitativas nominales, aquellas que no pueden someterse ante un criterio de orden por ejemplo los colores. 
+
+Por otro lado, definimos a las variables cuantitativas como aquellas que toman como argumento valores numéricos. Dentro de ellas, distinguimos entre variables cuantitativas discretas, aquellas que pueden tomar un numero contable de valores, y cuantitativas continuas, aquellas que pueden asumir cualquier valor dentro de un intervalo de valores. 
+
+Con esto en mente, definimos a la variable Tipo como una variable cualitativa nominal, a las variables Ingreso, Educación, Mujeres y Prestigio como variables cuantitativas continuas.
+
+
 ### Estadísticas descriptivas
 
 
@@ -41,11 +50,9 @@ for( i in 1:(length(tabla)-6)){
 kable(cbind(c("Min", "1st Qu", "Median", "Mean", "3rd Qu", "Max"), tabla))
 ```
  
+Del resumen de los datos podemos observar que existen ocupaciones sin participación laboral de la mujer (firefighters, rotary well drillers, railway sectionmen, train engineers, longshoremen). Específicamente, se puede observar que para el estudio la participación media de la mujer por ocupación es del 28.986%.
 
-
-El conjunto de datos contiene ocupaciones
-
-### Gráficas
+##Gráficas
 
 ```{r, echo=F}
 plotBase <- ggplot(data=lista01, aes(y=prestigio, color = tipo))
@@ -53,21 +60,25 @@ plotBase <- ggplot(data=lista01, aes(y=prestigio, color = tipo))
 plotBase + geom_point(aes(x = mujeres)) + labs(title = "Prestigio como función del porcentaje de mujeres en la ocupación")
 
 ```
+
+De la gráfica anterior podemos observar ningún patrón entre el prestigio de la ocupación y la participación laboral de la mujer. Por otro lado, es posible ver que si existe un orden en cuanto al tipo de ocupación. A simple vista parece que las mujeres profesionistas tienen una ocupación con prestigio mayor a las obreras y oficinistas.
+
 ```{r, echo=F}
 plotBase + geom_point(aes(x = educacion)) + labs(title = "Prestigio como función del nivel educativo")
-
-
 ```
+
+Si analizamos el prestigio en función del nivel educativo podemos observar que existe una tendencia/relación lineal entre ambas, es decir, a mayor nivel educativo mayor prestigio tiene la ocupación. Por otro lado, en esta gráfica se marca más el efecto que tiene el tipo de ocupación en el ingreso, siendo los profesionistas, oficinistas y obreros los de mayor, medio y menor prestigio respectivamente.
 
 ```{r,echo=F}
 plotBase + geom_point(aes(x = ingreso)) + scale_x_log10() + labs(title = "Prestigio como función del ingreso", subtitle = "Con el ingreso en escala logarítmica")
 
 ```
 
+En tercer lugar, si analizamos el prestigio como función del ingreso (en escala logarítmica) podemos observar una relación lineal entre ambas, cosa que nos indica que las ocupaciones que más pagan en promedio son aquellas que cuentan con el mayor prestigio. 
+
 ```{r,echo=F}
 
 ggplot(data = lista01, aes(x = tipo, prestigio)) + geom_boxplot() + labs(title = "Distribución del prestigio por tipo de ocupación")
 ```
 
-
-
+Finalmente, de esta gráfica podemos observar con mayor claridad la distribución del prestigio por tipo de ocupación. Se puede observar que las ocupaciones con mayor prestigio pertenecen en primer lugar a los profesionistas, en segundo lugar a los oficinistas (a excepción de los Medical tecnitians con 67.5 de prestigio), y en último lugar a los obreros. 
